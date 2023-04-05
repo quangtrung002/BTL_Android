@@ -7,11 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 
-import com.denzcoskun.imageslider.ImageSlider;
 import com.example.musicplayer.databinding.ActivityMainBinding;
-import com.example.musicplayer.ui.AlbumFragment;
-import com.example.musicplayer.ui.HomeFragment;
-import com.example.musicplayer.ui.ListFragment;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
