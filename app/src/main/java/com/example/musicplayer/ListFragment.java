@@ -66,16 +66,6 @@ public class ListFragment extends Fragment {
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
 
         Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
-        if(cursor == null){
-            songsList.add(new AudioModel("", "title 1", "", "artist 1"));
-        }
-        else {
-            String[] columnNames = cursor.getColumnNames();
-            for (String name : columnNames) {
-                Log.d("Title", "Title name " + cursor.getString(0));
-            }
-            songsList.add(new AudioModel("", "title 2", "", "artist 2"));
-        }
 
 
         while (cursor.moveToNext()) {

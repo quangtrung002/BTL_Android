@@ -1,6 +1,9 @@
 package com.example.musicplayer;
 
-public class AudioModel {
+
+import java.io.Serializable;
+
+public class AudioModel implements Serializable {
     String path, title, duration, artist;
 
     public AudioModel(String path, String title, String duration, String artist) {

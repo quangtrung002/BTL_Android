@@ -1,7 +1,9 @@
 package com.example.musicplayer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,20 +41,18 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
             holder.titleTextView.setTextColor(Color.parseColor("#000000"));
         }
 
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //navigate to another acitivty
-//
-//                MyMediaPlayer.getInstance().reset();
-//                MyMediaPlayer.currentIndex = position;
-//                Intent intent = new Intent(context,MusicPlayerActivity.class);
-//                intent.putExtra("LIST",songsList);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                context.startActivity(intent);
-//
-//            }
-//        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                MyMediaPlayer.getInstance().reset();
+                MyMediaPlayer.currentIndex = position;
+                Intent intent = new Intent(context,MusicPlayerActivity.class);
+                intent.putExtra("LIST",songsList);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }
+        });
 
     }
 
