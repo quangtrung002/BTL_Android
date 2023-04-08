@@ -2,13 +2,17 @@ package com.example.musicplayer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.TimePickerDialog;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,11 +22,13 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
     TextView titleTv, currentTimeTv, totalTimeTv;
     SeekBar seekBar;
-    ImageView pausePlay, nextBtn, previousBtn, musicIcon;
+    ImageView pausePlay, nextBtn, previousBtn, musicIcon, hengio, repeat;
     ArrayList<AudioModel> songsList;
     AudioModel currentSong;
     MediaPlayer mediaPlayer = MyMediaPlayer.getInstance();
     int x = 0;
+    private CountDownTimer countDownTimer;
+    private long timeLeft = 60000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,8 @@ public class MusicPlayerActivity extends AppCompatActivity {
         nextBtn = findViewById(R.id.next);
         previousBtn = findViewById(R.id.previous);
         musicIcon = findViewById(R.id.music_icon_big);
+        hengio = findViewById(R.id.hengio);
+        repeat = findViewById(R.id.repeat);
 
         titleTv.setSelected(true);
 
@@ -52,10 +60,10 @@ public class MusicPlayerActivity extends AppCompatActivity {
                     currentTimeTv.setText(convertToMMSS(mediaPlayer.getCurrentPosition() + ""));
 
                     if (mediaPlayer.isPlaying()) {
-                        pausePlay.setImageResource(R.drawable.ic_baseline_pause_circle_outline_24);
+                        pausePlay.setImageResource(R.drawable.baseline_pause_circle_outline_24);
                         musicIcon.setRotation(x++);
                     } else {
-                        pausePlay.setImageResource(R.drawable.ic_baseline_play_circle_outline_24);
+                        pausePlay.setImageResource(R.drawable.baseline_play_circle_outline_24);
                         musicIcon.setRotation(0);
                     }
 
@@ -83,6 +91,66 @@ public class MusicPlayerActivity extends AppCompatActivity {
             }
         });
 
+//Nút hẹn giờ đi ngủ
+        countDownTimer = new CountDownTimer(timeLeft, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeft = millisUntilFinished;
+                // Cập nhật hiển thị thời gian còn lại
+            }
+
+            @Override
+            public void onFinish() {
+                // Thay đổi hình ảnh khi hết thời gian
+                hengio.setImageResource(R.drawable.baseline_alarm_24);
+            }
+        };
+        hengio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePickerDialog();
+            }
+
+            private void showTimePickerDialog() {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(
+
+                        getApplicationContext(),new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+                        long millis = (hourOfDay * 60 + minute) * 60 * 1000; // chuyển đổi giờ và phút sang milliseconds
+                        startTimer(millis);
+                    }
+
+                    private void startTimer(long time) {
+                        timeLeft = time;
+                        countDownTimer.cancel(); // Huỷ bỏ bất kỳ hẹn giờ nào đang chạy
+                        countDownTimer.start(); // Bắt đầu hẹn giờ mới
+                    }
+                },
+                        0, // Giờ mặc định
+                        0, // Phút mặc định
+                        true // Sử dụng định dạng 24 giờ
+                );
+                timePickerDialog.show();
+            }
+        });
+    }
+    //Lặp lại bài hát
+    boolean isRepeatOn = false;
+
+    public void toggleRepeat(View view) {
+        if (isRepeatOn) {
+            repeat.setImageResource(R.drawable.baseline_repeat_one_24);
+            mediaPlayer.setLooping(false);
+            isRepeatOn = false;
+
+
+        } else {
+            repeat.setImageResource(R.drawable.baseline_repeat_one_on_24);
+            mediaPlayer.setLooping(true);
+            isRepeatOn = true;
+            mediaPlayer.start();
+        }
 
     }
 
@@ -98,8 +166,6 @@ public class MusicPlayerActivity extends AppCompatActivity {
         previousBtn.setOnClickListener(v -> playPreviousSong());
 
         playMusic();
-
-
     }
 
 

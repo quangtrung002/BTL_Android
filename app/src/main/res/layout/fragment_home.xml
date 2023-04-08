@@ -24,7 +24,8 @@
             app:iss_period="1000"
             app:iss_auto_cycle="true"
             app:iss_delay="1000"
-            app:iss_corner_radius="20"/>
+            app:iss_corner_radius="20"
+            tools:ignore="MissingClass" />
 
     </androidx.cardview.widget.CardView>
 
