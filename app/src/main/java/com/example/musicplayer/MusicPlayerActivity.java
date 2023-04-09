@@ -16,13 +16,14 @@ import android.widget.TimePicker;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class MusicPlayerActivity extends AppCompatActivity {
 
     TextView titleTv, currentTimeTv, totalTimeTv;
     SeekBar seekBar;
-    ImageView pausePlay, nextBtn, previousBtn, musicIcon, hengio, repeat;
+    ImageView pausePlay, nextBtn, previousBtn, musicIcon, hengio, repeat, random;
     ArrayList<AudioModel> songsList;
     AudioModel currentSong;
     MediaPlayer mediaPlayer = MyMediaPlayer.getInstance();
@@ -45,6 +46,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
         musicIcon = findViewById(R.id.music_icon_big);
         hengio = findViewById(R.id.hengio);
         repeat = findViewById(R.id.repeat);
+        random = findViewById(R.id.random);
 
         titleTv.setSelected(true);
 
@@ -91,68 +93,61 @@ public class MusicPlayerActivity extends AppCompatActivity {
             }
         });
 
-//Nút hẹn giờ đi ngủ
-        countDownTimer = new CountDownTimer(timeLeft, 1000) {
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
-            public void onTick(long millisUntilFinished) {
-                timeLeft = millisUntilFinished;
-                // Cập nhật hiển thị thời gian còn lại
-            }
-
-            @Override
-            public void onFinish() {
-                // Thay đổi hình ảnh khi hết thời gian
-                hengio.setImageResource(R.drawable.baseline_alarm_24);
-            }
-        };
-        hengio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showTimePickerDialog();
-            }
-
-            private void showTimePickerDialog() {
-                TimePickerDialog timePickerDialog = new TimePickerDialog(
-
-                        getApplicationContext(),new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-                        long millis = (hourOfDay * 60 + minute) * 60 * 1000; // chuyển đổi giờ và phút sang milliseconds
-                        startTimer(millis);
-                    }
-
-                    private void startTimer(long time) {
-                        timeLeft = time;
-                        countDownTimer.cancel(); // Huỷ bỏ bất kỳ hẹn giờ nào đang chạy
-                        countDownTimer.start(); // Bắt đầu hẹn giờ mới
-                    }
-                },
-                        0, // Giờ mặc định
-                        0, // Phút mặc định
-                        true // Sử dụng định dạng 24 giờ
-                );
-                timePickerDialog.show();
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                if(isRandom) playRandomSong();
+                else playNextSong();
             }
         });
+
+
+//Nút hẹn giờ đi ngủ
+//        countDownTimer = new CountDownTimer(timeLeft, 1000) {
+//            @Override
+//            public void onTick(long millisUntilFinished) {
+//                timeLeft = millisUntilFinished;
+//                // Cập nhật hiển thị thời gian còn lại
+//            }
+//
+//            @Override
+//            public void onFinish() {
+//                // Thay đổi hình ảnh khi hết thời gian
+//                hengio.setImageResource(R.drawable.baseline_alarm_24);
+//            }
+//        };
+//        hengio.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showTimePickerDialog();
+//            }
+//
+//            private void showTimePickerDialog() {
+//                TimePickerDialog timePickerDialog = new TimePickerDialog(
+//
+//                        getApplicationContext(), new TimePickerDialog.OnTimeSetListener() {
+//                    @Override
+//                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+//                        long millis = (hourOfDay * 60 + minute) * 60 * 1000; // chuyển đổi giờ và phút sang milliseconds
+//                        startTimer(millis);
+//                    }
+//
+//                    private void startTimer(long time) {
+//                        timeLeft = time;
+//                        countDownTimer.cancel(); // Huỷ bỏ bất kỳ hẹn giờ nào đang chạy
+//                        countDownTimer.start(); // Bắt đầu hẹn giờ mới
+//                    }
+//                },
+//                        0, // Giờ mặc định
+//                        0, // Phút mặc định
+//                        true // Sử dụng định dạng 24 giờ
+//                );
+//                timePickerDialog.show();
+//            }
+//        });
     }
-    //Lặp lại bài hát
-    boolean isRepeatOn = false;
-
-    public void toggleRepeat(View view) {
-        if (isRepeatOn) {
-            repeat.setImageResource(R.drawable.baseline_repeat_one_24);
-            mediaPlayer.setLooping(false);
-            isRepeatOn = false;
 
 
-        } else {
-            repeat.setImageResource(R.drawable.baseline_repeat_one_on_24);
-            mediaPlayer.setLooping(true);
-            isRepeatOn = true;
-            mediaPlayer.start();
-        }
-
-    }
 
     void setResourcesWithMusic() {
         currentSong = songsList.get(MyMediaPlayer.currentIndex);
@@ -164,6 +159,8 @@ public class MusicPlayerActivity extends AppCompatActivity {
         pausePlay.setOnClickListener(v -> pausePlay());
         nextBtn.setOnClickListener(v -> playNextSong());
         previousBtn.setOnClickListener(v -> playPreviousSong());
+        repeat.setOnClickListener(v -> playRepeatSong());
+        random.setOnClickListener(v -> playRandomSong());
 
         playMusic();
     }
@@ -184,6 +181,43 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
 
     }
+
+    //toggle btnRepeat and setLoop song
+    boolean isRepeat = false;
+    public void playRepeatSong() {
+        if (isRepeat) {
+            repeat.setImageResource(R.drawable.baseline_repeat_one_24);
+            isRepeat = false;
+        } else {
+            repeat.setImageResource(R.drawable.baseline_repeat_one_on_24);
+            isRepeat = true;
+        }
+
+        mediaPlayer.setLooping(isRepeat);
+    }
+
+    //toggle btnRandom and random indexSong
+    boolean isRandom = false;
+    int indexRandomSong ;
+    public  void playRandomSong(){
+        if(isRandom){
+            random.setImageResource(R.drawable.ic_baseline_transform_24);
+            isRandom = false;
+        } else{
+            random.setImageResource(R.drawable.ic_baseline_transform_24_on);
+            isRandom = true;
+        }
+
+        Random rand = new Random();
+        do {
+            indexRandomSong = rand.nextInt(songsList.size());
+        }while (indexRandomSong < 0 || indexRandomSong == MyMediaPlayer.currentIndex);
+
+        MyMediaPlayer.currentIndex = indexRandomSong;
+        mediaPlayer.reset();
+        setResourcesWithMusic();
+    }
+
 
     private void playNextSong() {
 
