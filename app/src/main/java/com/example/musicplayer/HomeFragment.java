@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,11 @@ import com.denzcoskun.imageslider.models.SlideModel;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+
+import cards.CardModel;
+import categorys.CategoryAdapter;
+import categorys.CategoryModel;
 
 public class HomeFragment extends Fragment {
 
@@ -27,7 +33,8 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    RecyclerView recyclerView;
+    RecyclerView rvSongsTop, rvCategorys;
+    CategoryAdapter categoryAdapter;
     ArrayList<AudioModel> songsList = new ArrayList<>();
 
     public HomeFragment() {
@@ -55,7 +62,9 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        recyclerView = view.findViewById(R.id.recycler_view);
+        rvSongsTop = view.findViewById(R.id.rv_songsTop);
+        rvCategorys = view.findViewById(R.id.rv_category);
+        categoryAdapter = new CategoryAdapter(getActivity().getApplicationContext());
 
         ImageSlider imageSlider = view.findViewById(R.id.imageSlider);
         ArrayList<SlideModel> slideModels = new ArrayList<>();
@@ -90,12 +99,33 @@ public class HomeFragment extends Fragment {
                 songsList.add(songData);
         }
 
-        ArrayList<AudioModel> songsTop = new ArrayList<>(songsList.subList(3,8));
+        ArrayList<AudioModel> songsTop = new ArrayList<>(songsList.subList(3, 8));
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new MusicListAdapter(songsTop, getActivity().getApplicationContext()));
+        rvSongsTop.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvSongsTop.setAdapter(new MusicListAdapter(songsTop, getActivity().getApplicationContext()));
 
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false);
+//        rvCategorys.setLayoutManager(linearLayoutManager);
+//
+//        categoryAdapter.setData(getListCategory());
+//        rvCategorys.setAdapter(categoryAdapter);
+//        List<CategoryModel> categorys = new ArrayList<>(getListCategory());
+//        for(int i = 0; i < categorys.size(); i++)
+//            Log.d("Category" + i, categorys[i].get)
 
         return view;
+    }
+
+    private List<CategoryModel> getListCategory() {
+        List<CategoryModel> categorys = new ArrayList<>();
+        List<CardModel> cards = new ArrayList<>();
+        cards.add(new CardModel(R.drawable.slide1, "title 1"));
+        cards.add(new CardModel(R.drawable.slide2, "title 2"));
+        cards.add(new CardModel(R.drawable.slide3, "title 3"));
+        cards.add(new CardModel(R.drawable.slide4, "title 4"));
+
+        categorys.add(new CategoryModel("Category 1", cards));
+
+        return categorys;
     }
 }
