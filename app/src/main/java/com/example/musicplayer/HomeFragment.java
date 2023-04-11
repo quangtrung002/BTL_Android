@@ -77,54 +77,59 @@ public class HomeFragment extends Fragment {
         imageSlider.setImageList(slideModels, ScaleTypes.FIT);
 
 
-        String[] projection = {
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.ARTIST
-        };
-
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-
-        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
-
-        while (cursor.moveToNext()) {
-            String path = cursor.getString(0);
-            String title = cursor.getString(1);
-            String duration = cursor.getString(2);
-            String artist = cursor.getString(3);
-
-            AudioModel songData = new AudioModel(path, title, duration, artist);
-            if (new File(songData.getPath()).exists())
-                songsList.add(songData);
-        }
-
-        ArrayList<AudioModel> songsTop = new ArrayList<>(songsList.subList(3, 8));
-
-        rvSongsTop.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvSongsTop.setAdapter(new MusicListAdapter(songsTop, getActivity().getApplicationContext()));
-
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false);
-//        rvCategorys.setLayoutManager(linearLayoutManager);
+//        String[] projection = {
+//                MediaStore.Audio.Media.DATA,
+//                MediaStore.Audio.Media.TITLE,
+//                MediaStore.Audio.Media.DURATION,
+//                MediaStore.Audio.Media.ARTIST
+//        };
 //
-//        categoryAdapter.setData(getListCategory());
-//        rvCategorys.setAdapter(categoryAdapter);
-//        List<CategoryModel> categorys = new ArrayList<>(getListCategory());
-//        for(int i = 0; i < categorys.size(); i++)
-//            Log.d("Category" + i, categorys[i].get)
+//        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+//
+//        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
+//
+//        while (cursor.moveToNext()) {
+//            String path = cursor.getString(0);
+//            String title = cursor.getString(1);
+//            String duration = cursor.getString(2);
+//            String artist = cursor.getString(3);
+//
+//            AudioModel songData = new AudioModel(path, title, duration, artist);
+//            if (new File(songData.getPath()).exists())
+//                songsList.add(songData);
+//        }
+//
+//        ArrayList<AudioModel> songsTop = new ArrayList<>(songsList.subList(3, 8));
+//
+//        rvSongsTop.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        rvSongsTop.setAdapter(new MusicListAdapter(songsTop, getActivity().getApplicationContext()));
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+        rvCategorys.setLayoutManager(linearLayoutManager);
+
+        categoryAdapter.setData(getListCategory());
+        rvCategorys.setAdapter(categoryAdapter);
+
 
         return view;
     }
 
     private List<CategoryModel> getListCategory() {
         List<CategoryModel> categorys = new ArrayList<>();
-        List<CardModel> cards = new ArrayList<>();
-        cards.add(new CardModel(R.drawable.slide1, "title 1"));
-        cards.add(new CardModel(R.drawable.slide2, "title 2"));
-        cards.add(new CardModel(R.drawable.slide3, "title 3"));
-        cards.add(new CardModel(R.drawable.slide4, "title 4"));
+        List<CardModel> chill = new ArrayList<>();
+        chill.add(new CardModel(R.drawable.chill1, "Cảm xúc tan chảy cùng những lựa chọn Ballad hay"));
+        chill.add(new CardModel(R.drawable.chill2, "Giai điệu R&B Việt thật phiêu để chúng ta cùng chill"));
+        chill.add(new CardModel(R.drawable.chill3, "Nhạc Việt lofi và gây nghiện hoài hoài"));
+        chill.add(new CardModel(R.drawable.chill4, "Thả mình cùng những giai điệu V-Pop nhẹ nhàng"));
 
-        categorys.add(new CategoryModel("Category 1", cards));
+        List<CardModel> author = new ArrayList<>();
+        author.add(new CardModel(R.drawable.author1, "Những chiếc nhạc mlem của HIEUTHUHAI"));
+        author.add(new CardModel(R.drawable.author2, "Nghe 'Người Như Anh' và Hit của Mai Tiến Dũng"));
+        author.add(new CardModel(R.drawable.author3, "'See Tình' và series Hit tạo nên thương hiệu"));
+        author.add(new CardModel(R.drawable.author4, "'Thị Mầu' Hòa Minzy và những bản Hit đỉnh nhất"));
+
+        categorys.add(new CategoryModel("Chill", chill));
+        categorys.add(new CategoryModel("Nghệ sĩ thịnh hành", author));
 
         return categorys;
     }

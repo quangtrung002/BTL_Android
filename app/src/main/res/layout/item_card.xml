@@ -25,6 +25,7 @@
             android:padding="6dp"
             android:textSize="14sp"
             android:textColor="#000"
+            android:maxLines="2"
             android:text="Title 1"/>
     </LinearLayout>
 
