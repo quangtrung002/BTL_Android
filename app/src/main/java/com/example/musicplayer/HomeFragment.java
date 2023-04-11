@@ -77,32 +77,32 @@ public class HomeFragment extends Fragment {
         imageSlider.setImageList(slideModels, ScaleTypes.FIT);
 
 
-//        String[] projection = {
-//                MediaStore.Audio.Media.DATA,
-//                MediaStore.Audio.Media.TITLE,
-//                MediaStore.Audio.Media.DURATION,
-//                MediaStore.Audio.Media.ARTIST
-//        };
-//
-//        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-//
-//        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
-//
-//        while (cursor.moveToNext()) {
-//            String path = cursor.getString(0);
-//            String title = cursor.getString(1);
-//            String duration = cursor.getString(2);
-//            String artist = cursor.getString(3);
-//
-//            AudioModel songData = new AudioModel(path, title, duration, artist);
-//            if (new File(songData.getPath()).exists())
-//                songsList.add(songData);
-//        }
-//
-//        ArrayList<AudioModel> songsTop = new ArrayList<>(songsList.subList(3, 8));
-//
-//        rvSongsTop.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        rvSongsTop.setAdapter(new MusicListAdapter(songsTop, getActivity().getApplicationContext()));
+        String[] projection = {
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.ARTIST
+        };
+
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+
+        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
+
+        while (cursor.moveToNext()) {
+            String path = cursor.getString(0);
+            String title = cursor.getString(1);
+            String duration = cursor.getString(2);
+            String artist = cursor.getString(3);
+
+            AudioModel songData = new AudioModel(path, title, duration, artist);
+            if (new File(songData.getPath()).exists())
+                songsList.add(songData);
+        }
+
+        ArrayList<AudioModel> songsTop = new ArrayList<>(songsList.subList(3, 8));
+
+        rvSongsTop.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvSongsTop.setAdapter(new MusicListAdapter(songsTop, getActivity().getApplicationContext()));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         rvCategorys.setLayoutManager(linearLayoutManager);

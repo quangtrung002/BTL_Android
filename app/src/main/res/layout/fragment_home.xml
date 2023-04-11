@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#EDEDED"
+    android:background="@drawable/vutru"
     tools:context=".HomeFragment">
 
     <androidx.cardview.widget.CardView
@@ -43,7 +43,7 @@
         android:textAllCaps="true"
         android:layout_below="@+id/card_view"
         android:textColor="#000"
-        android:textSize="20dp"
+        android:textSize="21dp"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
