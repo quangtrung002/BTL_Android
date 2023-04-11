@@ -1,12 +1,29 @@
 package com.example.musicplayer;
 
+import android.annotation.SuppressLint;
+import android.content.ContentProvider;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import albums.AlbumAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,8 +32,6 @@ import android.view.ViewGroup;
  */
 public class AlbumFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -28,15 +43,6 @@ public class AlbumFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AlbumFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static AlbumFragment newInstance(String param1, String param2) {
         AlbumFragment fragment = new AlbumFragment();
         Bundle args = new Bundle();
@@ -54,11 +60,78 @@ public class AlbumFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
+    RecyclerView recyclerViewalbum;
+    AlbumAdapter albumAdapter;
+    ArrayList<AudioModel> songList = new ArrayList<>();
+    String artistName;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_album, container, false);
+         //Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_album, container, false);
+        recyclerViewalbum = view.findViewById(R.id.recycler_view_album);
+        LinearLayoutManager lng = new LinearLayoutManager(getActivity());
+        lng.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerViewalbum.setLayoutManager(new LinearLayoutManager(getContext()));
+        albumAdapter = new AlbumAdapter(getContext(), songList);
+        recyclerViewalbum.setAdapter(albumAdapter);
+        // Lấy tên ca sĩ từ Media Store
+        artistName = getArtistName();
+        // Lấy danh sách bài hát từ Media Store
+        getSongList();
+
+        return view;
+    }
+
+    private void getSongList() {
+
+        String[] projection = { MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST };
+        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+                @SuppressLint("Range") String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                AudioModel songData = new AudioModel(artist);
+                //if (new File(songData.getPath()).exists())
+                if(songList.contains(artist)){
+                    continue;
+                }
+                songList.add(songData);
+            }
+            cursor.close();
+        }
+
+
+            //recyclerview
+            recyclerViewalbum.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recyclerViewalbum.setAdapter(new AlbumAdapter(getActivity().getApplicationContext(), songList));
+            
+    }
+
+    @SuppressLint("Range")
+    private String getArtistName() {
+        String artistName = "";
+        String[] projection = { MediaStore.Audio.Media.ARTIST };
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " !=0";
+        String sortOrder = MediaStore.Audio.Media.ARTIST + " ASC";
+
+        Cursor cursor = getActivity().getContentResolver().query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                null,
+                sortOrder
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            artistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+        }
+
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return artistName;
     }
 }

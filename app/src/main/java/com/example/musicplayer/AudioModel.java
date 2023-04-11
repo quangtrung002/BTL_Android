@@ -12,6 +12,9 @@ public class AudioModel implements Serializable {
         this.duration = duration;
         this.artist = artist;
     }
+    public AudioModel(String artist) {
+        this.artist = artist;
+    }
 
     public String getPath() {
         return path;

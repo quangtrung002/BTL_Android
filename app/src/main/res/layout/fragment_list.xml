@@ -31,6 +31,4 @@
         android:id="@+id/recycler_view"
         android:layout_below="@id/songs_text"/>
 
-
-
 </RelativeLayout>
