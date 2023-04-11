@@ -24,8 +24,6 @@ public class MusicPlayerActivity extends AppCompatActivity {
     AudioModel currentSong;
     MediaPlayer mediaPlayer = MyMediaPlayer.getInstance();
     int x = 0;
-    private CountDownTimer countDownTimer;
-    private long timeLeft = 60000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,51 +94,6 @@ public class MusicPlayerActivity extends AppCompatActivity {
                 else playNextSong();
             }
         });
-
-
-//Nút hẹn giờ đi ngủ
-//        countDownTimer = new CountDownTimer(timeLeft, 1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                timeLeft = millisUntilFinished;
-//                // Cập nhật hiển thị thời gian còn lại
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                // Thay đổi hình ảnh khi hết thời gian
-//                hengio.setImageResource(R.drawable.baseline_alarm_24);
-//            }
-//        };
-//        hengio.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showTimePickerDialog();
-//            }
-//
-//            private void showTimePickerDialog() {
-//                TimePickerDialog timePickerDialog = new TimePickerDialog(
-//
-//                        getApplicationContext(), new TimePickerDialog.OnTimeSetListener() {
-//                    @Override
-//                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-//                        long millis = (hourOfDay * 60 + minute) * 60 * 1000; // chuyển đổi giờ và phút sang milliseconds
-//                        startTimer(millis);
-//                    }
-//
-//                    private void startTimer(long time) {
-//                        timeLeft = time;
-//                        countDownTimer.cancel(); // Huỷ bỏ bất kỳ hẹn giờ nào đang chạy
-//                        countDownTimer.start(); // Bắt đầu hẹn giờ mới
-//                    }
-//                },
-//                        0, // Giờ mặc định
-//                        0, // Phút mặc định
-//                        true // Sử dụng định dạng 24 giờ
-//                );
-//                timePickerDialog.show();
-//            }
-//        });
     }
 
 

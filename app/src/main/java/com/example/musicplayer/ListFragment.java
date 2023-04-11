@@ -62,7 +62,7 @@ public class ListFragment extends Fragment {
                 MediaStore.Audio.Media.ARTIST
         };
 
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
 
         Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
 

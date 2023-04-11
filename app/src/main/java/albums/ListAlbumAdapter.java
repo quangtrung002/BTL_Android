@@ -1,4 +1,4 @@
-package com.example.musicplayer;
+package albums;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,35 +10,40 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.musicplayer.AudioModel;
+import com.example.musicplayer.MusicPlayerActivity;
+import com.example.musicplayer.MyMediaPlayer;
+import com.example.musicplayer.R;
 
 import java.util.ArrayList;
 
-public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.ViewHolder>{
-
+public class ListAlbumAdapter extends RecyclerView.Adapter<ListAlbumAdapter.ViewHolder> {
     ArrayList<AudioModel> songsList;
     Context context;
 
-    public MusicListAdapter(ArrayList<AudioModel> songsList, Context context) {
+    public ListAlbumAdapter(ArrayList<AudioModel> songsList, Context context) {
         this.songsList = songsList;
         this.context = context;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recycler_item,parent,false);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.recycle_item_album,parent,false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(ListAlbumAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         AudioModel songData = songsList.get(position);
-        holder.titleTextView.setText(songData.getTitle());
+        holder.titleTextViewAlbum.setText(songData.getTitle());
 
         if(MyMediaPlayer.currentIndex==position){
-            holder.titleTextView.setTextColor(Color.parseColor("#FF0000"));
+            holder.titleTextViewAlbum.setTextColor(Color.parseColor("#FF0000"));
         }else{
-            holder.titleTextView.setTextColor(Color.parseColor("#000000"));
+            holder.titleTextViewAlbum.setTextColor(Color.parseColor("#000000"));
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -47,13 +52,12 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
                 MyMediaPlayer.getInstance().reset();
                 MyMediaPlayer.currentIndex = position;
-                Intent intent = new Intent(context,MusicPlayerActivity.class);
+                Intent intent = new Intent(context, MusicPlayerActivity.class);
                 intent.putExtra("LIST",songsList);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
-
     }
 
     @Override
@@ -61,14 +65,13 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         return songsList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-
-        TextView titleTextView;
-        ImageView iconImageView;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView titleTextViewAlbum;
+        ImageView iconImageViewAlbum;
         public ViewHolder(View itemView) {
             super(itemView);
-            titleTextView = itemView.findViewById(R.id.music_title_text);
-            iconImageView = itemView.findViewById(R.id.icon_view);
+            titleTextViewAlbum = itemView.findViewById(R.id.music_title_text_album);
+            iconImageViewAlbum = itemView.findViewById(R.id.icon_view_album);
         }
     }
 }
