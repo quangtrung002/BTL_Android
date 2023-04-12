@@ -66,7 +66,6 @@ public class ListFragment extends Fragment {
 
         Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
 
-
         while (cursor.moveToNext()) {
             String path = cursor.getString(0);
             String title = cursor.getString(1);

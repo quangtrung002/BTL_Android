@@ -6,6 +6,7 @@
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
     android:paddingTop="5dp"
+    android:paddingStart="10dp"
     android:paddingBottom="5dp"
     xmlns:tools="http://schemas.android.com/tools">
 

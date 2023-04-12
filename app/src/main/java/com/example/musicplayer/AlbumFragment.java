@@ -38,6 +38,7 @@ public class AlbumFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private AlbumHelper albumHelper;
 
     public AlbumFragment() {
         // Required empty public constructor
@@ -62,76 +63,116 @@ public class AlbumFragment extends Fragment {
     }
     RecyclerView recyclerViewalbum;
     AlbumAdapter albumAdapter;
-    ArrayList<AudioModel> songList = new ArrayList<>();
+    ArrayList<AudioModel> songsList = new ArrayList<>();
     String artistName;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-         //Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_album, container, false);
-        recyclerViewalbum = view.findViewById(R.id.recycler_view_album);
-        LinearLayoutManager lng = new LinearLayoutManager(getActivity());
-        lng.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerViewalbum.setLayoutManager(new LinearLayoutManager(getContext()));
-        albumAdapter = new AlbumAdapter(getContext(), songList);
-        recyclerViewalbum.setAdapter(albumAdapter);
-        // Lấy tên ca sĩ từ Media Store
-        artistName = getArtistName();
-        // Lấy danh sách bài hát từ Media Store
-        getSongList();
+        songsList = getAllSongs();
+        albumHelper = new AlbumHelper(getContext(), "Ablum", null, 1);
+        albumHelper.queryData("CREATE TABLE IF NOT EXISTS album (id INTEGER PRIMARY KEY AUTOINCREMENT, titleAlbum  VARCHAR(100))");
+
+        for(AudioModel song : songsList){
+            String artist = song.getArtist();
+            String query = "INSERT INTO album VALUES (null, '" + artist.replace("'", "''") + "')";
+            albumHelper.queryData(query);
+        }
+
+        Cursor albums = albumHelper.getData("SELECT * FROM album");
+        while(albums.moveToNext()){
+            Log.d("title", albums.getString(1));
+        }
+
+//        recyclerViewalbum = view.findViewById(R.id.recycler_view_album);
+//        LinearLayoutManager lng = new LinearLayoutManager(getActivity());
+//        lng.setOrientation(LinearLayoutManager.VERTICAL);
+//        recyclerViewalbum.setLayoutManager(new LinearLayoutManager(getContext()));
+//        albumAdapter = new AlbumAdapter(getContext(), songsList);
+//        recyclerViewalbum.setAdapter(albumAdapter);
+//        // Lấy tên ca sĩ từ Media Store
+//        artistName = getArtistName();
+//        // Lấy danh sách bài hát từ Media Store
+//        getSongList();
 
         return view;
     }
 
-    private void getSongList() {
+//    private void getSongList() {
+//
+//        String[] projection = { MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST };
+//        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
+//
+//        if (cursor != null) {
+//            while (cursor.moveToNext()) {
+//                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+//                @SuppressLint("Range") String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+//                AudioModel songData = new AudioModel(artist);
+//                //if (new File(songData.getPath()).exists())
+//                if(songList.contains(artist)){
+//                    continue;
+//                }
+//                songList.add(songData);
+//            }
+//            cursor.close();
+//        }
+//
+//
+//            //recyclerview
+//            recyclerViewalbum.setLayoutManager(new LinearLayoutManager(getActivity()));
+//            recyclerViewalbum.setAdapter(new AlbumAdapter(getActivity().getApplicationContext(), songList));
+//
+//    }
 
-        String[] projection = { MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.ARTIST };
-        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
+//    @SuppressLint("Range")
+//    private String getArtistName() {
+//        String artistName = "";
+//        String[] projection = { MediaStore.Audio.Media.ARTIST };
+//        String selection = MediaStore.Audio.Media.IS_MUSIC + " !=0";
+//        String sortOrder = MediaStore.Audio.Media.ARTIST + " ASC";
+//
+//        Cursor cursor = getActivity().getContentResolver().query(
+//                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+//                projection,
+//                selection,
+//                null,
+//                sortOrder
+//        );
+//
+//        if (cursor != null && cursor.moveToFirst()) {
+//            artistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+//        }
+//
+//        if (cursor != null) {
+//            cursor.close();
+//        }
+//
+//        return artistName;
+//    }
 
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                @SuppressLint("Range") String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                AudioModel songData = new AudioModel(artist);
-                //if (new File(songData.getPath()).exists())
-                if(songList.contains(artist)){
-                    continue;
-                }
+    public ArrayList getAllSongs(){
+        ArrayList<AudioModel> songList = new ArrayList<>();
+
+        String[] projection = {
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.ARTIST
+        };
+
+        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
+
+        Cursor cursor = getActivity().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, null);
+
+        while (cursor.moveToNext()) {
+            String path = cursor.getString(0);
+            String title = cursor.getString(1);
+            String duration = cursor.getString(2);
+            String artist = cursor.getString(3);
+            AudioModel songData = new AudioModel(path, title, duration, artist);
+            if (new File(songData.getPath()).exists())
                 songList.add(songData);
-            }
-            cursor.close();
         }
-
-
-            //recyclerview
-            recyclerViewalbum.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerViewalbum.setAdapter(new AlbumAdapter(getActivity().getApplicationContext(), songList));
-            
-    }
-
-    @SuppressLint("Range")
-    private String getArtistName() {
-        String artistName = "";
-        String[] projection = { MediaStore.Audio.Media.ARTIST };
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " !=0";
-        String sortOrder = MediaStore.Audio.Media.ARTIST + " ASC";
-
-        Cursor cursor = getActivity().getContentResolver().query(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                projection,
-                selection,
-                null,
-                sortOrder
-        );
-
-        if (cursor != null && cursor.moveToFirst()) {
-            artistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-        }
-
-        if (cursor != null) {
-            cursor.close();
-        }
-
-        return artistName;
+        return songList;
     }
 }

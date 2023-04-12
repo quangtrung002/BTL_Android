@@ -109,13 +109,16 @@ public class HomeFragment extends Fragment {
 
         categoryAdapter.setData(getListCategory());
         rvCategorys.setAdapter(categoryAdapter);
-
+//        List<CategoryModel> categorys = new ArrayList<>(getListCategory());
+//        for(int i = 0; i < categorys.size(); i++)
+//            Log.d("Category" + i, categorys[i].get)
 
         return view;
     }
 
     private List<CategoryModel> getListCategory() {
         List<CategoryModel> categorys = new ArrayList<>();
+
         List<CardModel> chill = new ArrayList<>();
         chill.add(new CardModel(R.drawable.chill1, "Cảm xúc tan chảy cùng những lựa chọn Ballad hay"));
         chill.add(new CardModel(R.drawable.chill2, "Giai điệu R&B Việt thật phiêu để chúng ta cùng chill"));
@@ -130,7 +133,6 @@ public class HomeFragment extends Fragment {
 
         categorys.add(new CategoryModel("Chill", chill));
         categorys.add(new CategoryModel("Nghệ sĩ thịnh hành", author));
-
         return categorys;
     }
 }
