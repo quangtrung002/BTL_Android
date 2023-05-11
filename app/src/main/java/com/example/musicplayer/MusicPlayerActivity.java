@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -19,7 +20,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
 
     TextView titleTv, currentTimeTv, totalTimeTv;
     SeekBar seekBar;
-    ImageView pausePlay, nextBtn, previousBtn, musicIcon, hengio, repeat, random;
+    ImageView pausePlay, nextBtn, previousBtn, musicIcon, addAlbum, repeat, random;
     ArrayList<AudioModel> songsList;
     AudioModel currentSong;
     MediaPlayer mediaPlayer = MyMediaPlayer.getInstance();
@@ -38,7 +39,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
         nextBtn = findViewById(R.id.next);
         previousBtn = findViewById(R.id.previous);
         musicIcon = findViewById(R.id.music_icon_big);
-        hengio = findViewById(R.id.hengio);
+        addAlbum = findViewById(R.id.addAlbum);
         repeat = findViewById(R.id.repeat);
         random = findViewById(R.id.random);
 
@@ -110,8 +111,13 @@ public class MusicPlayerActivity extends AppCompatActivity {
         previousBtn.setOnClickListener(v -> playPreviousSong());
         repeat.setOnClickListener(v -> playRepeatSong());
         random.setOnClickListener(v -> playRandomSong());
+        addAlbum.setOnClickListener(v -> handle());
 
         playMusic();
+    }
+
+    private void handle(){
+        Log.d("Title", currentSong.getTitle());
     }
 
 

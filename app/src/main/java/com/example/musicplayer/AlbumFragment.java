@@ -19,6 +19,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,7 +42,7 @@ public class AlbumFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private AlbumHelper albumHelper;
+
 
     public AlbumFragment() {
         // Required empty public constructor
@@ -61,41 +65,60 @@ public class AlbumFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
     RecyclerView recyclerViewalbum;
     AlbumAdapter albumAdapter;
     ArrayList<AudioModel> songsList = new ArrayList<>();
     String artistName;
+    AlbumHelper albumHelper;
+    Button addBtn;
+    EditText inputSearch;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album, container, false);
-        songsList = getAllSongs();
-        albumHelper = new AlbumHelper(getContext(), "Ablum", null, 1);
+        addBtn = view.findViewById(R.id.addBtn);
+        inputSearch = view.findViewById(R.id.search);
+
+        addBtn.setOnClickListener(v -> handle());
+
+        albumHelper = new AlbumHelper(getContext(), "Album", null, 1);
         albumHelper.queryData("CREATE TABLE IF NOT EXISTS album (id INTEGER PRIMARY KEY AUTOINCREMENT, titleAlbum  VARCHAR(100))");
+//
+//        for (AudioModel song : songsList) {
+//            String artist = song.getArtist();
+//            String query = "INSERT INTO album VALUES (null, '" + artist.replace("'", "''") + "')";
+//            albumHelper.queryData(query);
+//        }
+//
+//        Cursor albums = albumHelper.getData("SELECT * FROM album");
+//        while (albums.moveToNext()) {
+//            Log.d("title", albums.getString(1));
+//        }
 
-        for(AudioModel song : songsList){
-            String artist = song.getArtist();
-            String query = "INSERT INTO album VALUES (null, '" + artist.replace("'", "''") + "')";
-            albumHelper.queryData(query);
-        }
-
-        Cursor albums = albumHelper.getData("SELECT * FROM album");
-        while(albums.moveToNext()){
-            Log.d("title", albums.getString(1));
-        }
-
-//        recyclerViewalbum = view.findViewById(R.id.recycler_view_album);
-//        LinearLayoutManager lng = new LinearLayoutManager(getActivity());
-//        lng.setOrientation(LinearLayoutManager.VERTICAL);
-//        recyclerViewalbum.setLayoutManager(new LinearLayoutManager(getContext()));
-//        albumAdapter = new AlbumAdapter(getContext(), songsList);
-//        recyclerViewalbum.setAdapter(albumAdapter);
+        recyclerViewalbum = view.findViewById(R.id.recycler_view_album);
+        LinearLayoutManager lng = new LinearLayoutManager(getActivity());
+        lng.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerViewalbum.setLayoutManager(new LinearLayoutManager(getContext()));
+        albumAdapter = new AlbumAdapter(getContext(), songsList);
+        recyclerViewalbum.setAdapter(albumAdapter);
 //        // Lấy tên ca sĩ từ Media Store
 //        artistName = getArtistName();
 //        // Lấy danh sách bài hát từ Media Store
 //        getSongList();
 
         return view;
+    }
+
+    void handle(){
+        String valueInput = inputSearch.getText().toString();
+        String query = "INSERT INTO album VALUES(null, '" + valueInput + "')";
+        Cursor albums = albumHelper.getData("SELECT * FROM album");
+        while (albums.moveToNext()) {
+            Log.d("title", albums.getString(1));
+        }
     }
 
 //    private void getSongList() {
@@ -150,7 +173,7 @@ public class AlbumFragment extends Fragment {
 //        return artistName;
 //    }
 
-    public ArrayList getAllSongs(){
+    public ArrayList getAllSongs() {
         ArrayList<AudioModel> songList = new ArrayList<>();
 
         String[] projection = {

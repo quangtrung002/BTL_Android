@@ -23,11 +23,11 @@
         android:textSize="20dp" />
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/hengio"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/addAlbum"
         android:scaleType="fitXY"
-        android:src="@drawable/ghostbutter"
+        android:src="@drawable/ic_baseline_add_24"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="35dp"
         android:layout_marginRight="29dp"
